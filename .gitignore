@@ -1,0 +1,16 @@
+target/
+!.mvn/wrapper/maven-wrapper.jar
+!**/src/main/**/target/
+!**/src/test/**/target/
+
+### IDE ###
+.idea
+*.iws
+*.iml
+*.ipr
+.vscode/
+
+### logs & temp ###
+*.log
+build.log
+upload/

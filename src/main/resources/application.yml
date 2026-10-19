@@ -1,0 +1,76 @@
+server:
+  port: 8082
+  servlet:
+    context-path: /api
+
+spring:
+  profiles:
+    active: dev
+  application:
+    name: group-buy
+  jackson:
+    default-property-inclusion: non_null
+    time-zone: GMT+8
+    date-format: yyyy-MM-dd HH:mm:ss
+
+---
+spring:
+  config:
+    activate:
+      on-profile: dev
+
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://127.0.0.1:3306/group_buy?useUnicode=true&characterEncoding=utf8&serverTimezone=Asia/Shanghai&allowPublicKeyRetrieval=true&useSSL=false
+    username: root
+    password: root
+    hikari:
+      maximum-pool-size: 20
+
+  data:
+    redis:
+      host: 127.0.0.1
+      port: 6379
+      database: 2
+      timeout: 5s
+
+  rabbitmq:
+    host: 127.0.0.1
+    port: 5672
+    username: guest
+    password: guest
+    virtual-host: /
+    # 消费者确认模式：auto（业务异常会重新入队，这里在代码中自行 catch 保证不无限重试）
+    listener:
+      simple:
+        acknowledge-mode: auto
+        retry:
+          enabled: true
+          max-attempts: 3
+          initial-interval: 2000ms
+
+mybatis-plus:
+  configuration:
+    map-underscore-to-camel-case: true
+    log-impl: org.apache.ibatis.logging.slf4j.Slf4jImpl
+  global-config:
+    db-config:
+      id-type: auto
+      logic-delete-field: deleted
+      logic-delete-value: 1
+      logic-not-delete-value: 0
+
+# 项目自定义配置
+groupbuy:
+  jwt:
+    secret: group-buy-jwt-secret-key-please-change-in-production-env
+    expire-minutes: 180
+  order:
+    # 订单超时未支付自动取消的时间（分钟）
+    timeout-minutes: 15
+  upload:
+    path: ./upload/
+
+logging:
+  level:
+    com.groupbuy: debug
